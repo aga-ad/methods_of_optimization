@@ -8,12 +8,12 @@ double sqr(double x) {
     return x*x;
 }
 
-// The first variant
-// 6*x^2 + 7*x^6 - x*y^2 + 2*x^3*y^3 + 8*y^4 + 5*y^6
+// f(x, y) = 3 * x^2 + 8 * x^4 - 12 * x * y + 4 * y^2 - 4 * x^2 * y^3 + y^6
+// global minimum is -2.1817 in (0.840911, 1.1511)
 double f(const double arg[2]) {
     double x = arg[0];
     double y = arg[1];
-    return 4 * pow(x, 2) + 7 * pow(x, 6) - x * pow(y, 2) + 2 * pow(x, 3) * pow(y, 3) + 8 * pow(y, 4) + 5 * pow(y, 6);
+    return 3 * pow(x, 2) + 8 * pow(x, 4) - 12 * x * y + 4 * pow(y, 2) - 4 * pow(x, 2) * pow(y, 3) + pow(y, 6);
 }
 
 /*
@@ -117,14 +117,25 @@ int main() {
     cout << fixed << setprecision(8);
 
     {
-        double point[2] = {-20.2, 30.5};
-        gradient_descent<2>(point, f, 100, 0.99, 0.00000000001, 10000);
+        double point[2] = {2.2, 3.5};
+        gradient_descent<2>(point, f, 100, 0.999, 0.00000000001, 100000);
         cout << "point = " << point[0] << " " << point[1] << "    local min = " << f(point) << endl;
+        //finds point = -0.46639822 -0.55766976    local min = -0.66506061 local minimum
     }
+
+    {
+        double point[2] = {2.2, 3.5};
+        gradient_descent<2>(point, f, 100, 0.9, 0.00000000001, 100000);
+        cout << "point = " << point[0] << " " << point[1] << "    local min = " << f(point) << endl;
+        // finds point = 0.84091106 1.15109548    local min = -2.18169756 global minimum
+    }
+
     {
         double point[2] = {-12.2, 13.5};
-        coordinate_search<2>(point, f, -20, 20, 200, 0.000001, 10000);
+        coordinate_search<2>(point, f, -20, 20, 10000, 0.000001, 10000);
         cout << "point = " << point[0] << " " << point[1] << "    local min = " << f(point) << endl;
+        //finds point = 0.84000000 1.15200000    local min = -2.18162320 global minimum
+
     }
     return 0;
 }
