@@ -37,7 +37,7 @@ void derivative(const double point[NARG], double (*f)(const double arg[NARG]), d
 }
 
 /*
-Квадрат нормы вектора
+Норма вектора
 vec - вектор
 */
 template<unsigned int NARG>
