@@ -13,7 +13,7 @@ double sqr(double x) {
 double f(const double arg[2]) {
     double x = arg[0];
     double y = arg[1];
-    return 6 * pow(x, 2) + 7 * pow(x, 6) - x * pow(y, 2) + 2 * pow(x, 3) * pow(y, 3) + 8 * pow(y, 4) + 5 * pow(y, 6);
+    return 4 * pow(x, 2) + 7 * pow(x, 6) - x * pow(y, 2) + 2 * pow(x, 3) * pow(y, 3) + 8 * pow(y, 4) + 5 * pow(y, 6);
 }
 
 /*
@@ -41,12 +41,12 @@ void derivative(const double point[NARG], double (*f)(const double arg[NARG]), d
 vec - вектор
 */
 template<unsigned int NARG>
-double norm2(const double vec[NARG]) {
+double norm(const double vec[NARG]) {
     double res = 0;
     for (int i = 0; i < NARG; i++) {
         res += sqr(vec[i]);
     }
-    return res;
+    return sqrt(res);
 }
 
 /*
@@ -55,22 +55,21 @@ point - начальная точка
 f - Функция
 lambda - параметр начального шага
 lambda_mult - изменение параметра шага
-eps2 - квадрат нормы производной для остановки
+eps - норма производной для остановки
 max-steps - максимальное количество шагов
 */
 template<unsigned int NARG>
-void gradient_descent(double point[NARG], double (*f)(const double arg[NARG]), double lambda, double lambda_mult, double eps2, size_t max_steps) {
+void gradient_descent(double point[NARG], double (*f)(const double arg[NARG]), double lambda, double lambda_mult, double eps, size_t max_steps) {
     double d[NARG];
     double normal;
     for (size_t i = 0; i < max_steps; i++) {
         derivative<NARG>(point, f, d);
-        normal = norm2<NARG>(d);
-        //cout << i << " " << normal << endl;
-        if (normal < eps2) {
+        normal = norm<NARG>(d);
+        if (normal < eps) {
             return;
         }
         for (int j = 0; j < NARG; j++) {
-            point[j] = point[j] * d[j] * lambda / normal;
+            point[j] = point[j] - d[j] * lambda / normal;
         }
         lambda *= lambda_mult;
     }
@@ -118,12 +117,12 @@ int main() {
     cout << fixed << setprecision(8);
 
     {
-        double point[2] = {-2.2, 3.5};
-        gradient_descent<2>(point, f, 1, 0.9, 0.000000000001, 10000);
+        double point[2] = {-20.2, 30.5};
+        gradient_descent<2>(point, f, 100, 0.99, 0.00000000001, 10000);
         cout << "point = " << point[0] << " " << point[1] << "    local min = " << f(point) << endl;
     }
     {
-        double point[2] = {-2.2, 3.5};
+        double point[2] = {-12.2, 13.5};
         coordinate_search<2>(point, f, -20, 20, 200, 0.000001, 10000);
         cout << "point = " << point[0] << " " << point[1] << "    local min = " << f(point) << endl;
     }
